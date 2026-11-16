@@ -1,0 +1,236 @@
+---
+title: "Behavioural Data Analysis - EP3Dageing"
+author: "Kate Nevin"
+execute: 
+  message: false
+  warning: false
+format: 
+  html:
+    embed-resources: true
+    code-fold: true
+    code-summary: "Show R code"
+    toc: true
+    toc-location: left
+    toc-depth: 5
+editor: visual
+---
+
+## Setting up the Document
+
+```{r set-project-root}
+#| results: false
+
+if (!requireNamespace("here", quietly = TRUE)) install.packages("here")
+library(here)
+
+# sanity check: prints the project root
+message("Project root: ", here::here())
+```
+
+```{r activating-packages}
+#| results: false
+
+# List of required packages
+packages <- c(
+  "tidyverse",
+  "dplyr",
+  "tidyr",
+  "ggplot2",
+  "psycho"        # Used for calculating hits, misses, etc. and d'
+)
+
+# Install missing packages
+installed <- packages %in% rownames(installed.packages())
+if (any(!installed)) {
+  install.packages(packages[!installed])
+}
+
+# Load packages
+invisible(lapply(packages, library, character.only = TRUE))
+
+```
+
+## Import Raw Data
+
+### Set data directory
+
+```{r set-raw-data-dir}
+
+behavioural_data_dir <- here(
+  "2. Raw Data and Videos",
+  "1. Behavioural_Data"
+)
+
+```
+
+### Import Data
+
+```{r import-data}
+
+# List all CSV files in the directory
+behavioural_files <- list.files(
+  path = behavioural_data_dir,
+  pattern = "\\.csv$",
+  full.names = TRUE
+)
+
+length(behavioural_files)
+
+# Read in and process each file
+behavioural_list <- lapply(behavioural_files, function(file) {
+  df <- read_csv(file, show_col_types = FALSE) %>%
+    select(-matches("^\\.\\.\\.\\d+$"))  # drop unnamed columns (...1, ...2, etc.)
+  
+  if ("occupation_task_hours" %in% names(df)) {
+    df <- df %>% mutate(occupation_task_hours = as.character(occupation_task_hours))
+  }
+  
+  if ("num_years_instrument" %in% names(df)) {
+    df <- df %>% mutate(num_years_instrument = as.character(num_years_instrument))
+  }
+  
+  if ("group" %in% names(df)) {
+    df <- df %>% mutate(group = as.character(group))
+  }
+  
+  df
+})
+
+# Combine into one dataframe, recording which file each row came from
+names(behavioural_list) <- basename(behavioural_files)
+beh_df <- bind_rows(behavioural_list)
+```
+
+### Check Data Quality
+
+```{r inspect-data}
+
+head(beh_df)
+```
+
+## Accuracy
+
+### Overall Accuracy
+
+```{r mean-overall-accuracy}
+
+mean_overall_accuracy <- mean(beh_df$corr)
+mean_overall_accuracy
+```
+
+```{r overall-accuracy-participant}
+
+overall_accuracy_participant <- beh_df %>%
+  group_by(participant) %>%
+  summarise(mean = mean(corr),
+            std = sd(corr))
+
+knitr::kable(
+  overall_accuracy_participant,
+  col.names = c("Participant", "Mean", "Standard Deviation")
+)
+```
+
+```{r plot-overall-accuracy-participant}
+
+ggplot(overall_accuracy_participant,
+       aes(x = factor(participant), y = mean)) +
+  geom_col(width = 0.7, col = "darkslategray4", fill = "darkslategray4") +
+  scale_y_continuous(limits = c(0, 1), labels = scales::percent) +
+  labs(x = "Participant", y = "Mean accuracy") +
+  geom_hline(yintercept = mean(beh_df$corr), colour = "#F8766D", linetype = "dashed") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+```
+
+### Accuracy Same vs Different Trials
+
+Overall accuracy per trial type (same trials versus different trials)
+
+```{r accuracy-same-diff}
+
+diff_accuracy <- mean(beh_df$corr[beh_df$trial_type == "diff"])
+same_accuracy <- mean(beh_df$corr[beh_df$trial_type == "same"])
+```
+
+The mean accuracy for same trials (zero-step neighbour) is `r round(diff_accuracy*100, 2)`%.
+
+The mean accuracy for different trials (two-step neighbour) is `r round(same_accuracy*100, 2)`%.
+
+```{r accuracy-same-diff-participant}
+
+accuracy_same_diff_participant <- beh_df %>%
+  group_by(participant, trial_type) %>%
+  summarise(mean = mean(corr),
+            std = sd(corr))
+
+knitr::kable(
+  accuracy_same_diff_participant,
+  col.names = c("Participant", "Trial Type", "Mean", "Standard Deviation")
+)
+
+```
+
+```{r plot-accuracy-same-diff-participant}
+
+ggplot(accuracy_same_diff_participant,
+       aes(x = factor(participant), y = mean, fill = trial_type)) +
+  geom_col(position = position_dodge(width = 0.8), width = 0.7) +
+  scale_y_continuous(limits = c(0, 1), labels = scales::percent) +
+  labs(x = "Participant", y = "Mean accuracy", fill = "Trial type") +
+  geom_hline(yintercept = mean(beh_df$corr[beh_df$trial_type == "diff"]), colour = "#F8766D", linetype = "dashed") +
+  geom_hline(yintercept = mean(beh_df$corr[beh_df$trial_type == "same"]), colour = "#00BFC4", linetype = "dashed") +     
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+```
+
+## Hits, Misses, False Alarms, Correct Rejections
+
+Now we need to calculate hits, misses, false alarms, and correct rejections. I am going define this in terms of "same" trials, i.e. a hit is the correct identification of a same trial.
+
+```{r define-hits-misses-fa-cj}
+
+signal_det <- beh_df %>%
+  group_by(participant) %>%
+  summarise(hits = sum(trial_type == "same" & key_resp == "s"),
+            misses = sum(trial_type == "same" & key_resp == "d"),
+            fa = sum(trial_type == "diff" & key_resp == "s"),
+            corr_rej = sum(trial_type == "diff" & key_resp == "d")) %>%
+  mutate(dprime = dprime(n_hit = hits, n_fa = fa, 
+                         n_miss = misses, n_cr = corr_rej)$dprime,
+         c = dprime(n_hit = hits, 
+                    n_fa = fa, n_miss = misses, n_cr = corr_rej)$c)
+
+```
+
+```{r beh_df-table}
+
+knitr::kable(
+  signal_det,
+  col.names = c("Participant", "Hits", "Misses", "False Alarms", "Correct Rejections", "d'", "c")
+)
+```
+
+```{r plot-dprime}
+
+ggplot(signal_det,
+       aes(x = factor(participant), y = dprime)) +
+  geom_col(position = position_dodge(width = 0.8), width = 0.7) +
+  # scale_y_continuous(limits = c(0, 1), labels = scales::percent) +
+  labs(x = "Participant", y = "d'") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+```
+
+```{r plot-bias}
+
+ggplot(signal_det,
+       aes(x = factor(participant), y = c)) +
+  geom_col(position = position_dodge(width = 0.8), width = 0.7) +
+  # scale_y_continuous(limits = c(0, 1), labels = scales::percent) +
+  labs(x = "Participant", y = "Bias (c)") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+```

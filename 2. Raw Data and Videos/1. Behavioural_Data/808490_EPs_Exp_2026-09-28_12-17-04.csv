@@ -1,0 +1,25 @@
+participant,group,age_group,DOB,age_yrs,age_yrs_dec,sex,education_level,hand_surgery_yn,hand_surgery_years_ago,occupation_hand_use_yn,occupation_tasks,occupation_task_hours,num_languages,languages_fluent,musician_yn,instruments_played,num_years_instrument,ref_stim,comp_stim,first_stim,second_stim,trial_num,step_size,trial_type,key_resp,corr,first_dur,second_dur,isi_dur,confidence_rating
+808490,B,younger,22/04/2004,22,22.4166666666667,male,tertiary,n,NaN,n,none,0,2,"English, German",y,Guitar,16,21,19,19,21,1,2,diff,d,1,3.99262799999863,4.01846400000155,3.63212200000137,5
+808490,B,younger,22/04/2004,22,22.4166666666667,male,tertiary,n,NaN,n,none,0,2,"English, German",y,Guitar,16,3,3,3,3,2,0,same,s,1,3.99266499999911,4.01850299999863,3.63206700000167,5
+808490,B,younger,22/04/2004,22,22.4166666666667,male,tertiary,n,NaN,n,none,0,2,"English, German",y,Guitar,16,9,9,9,9,3,0,same,s,1,3.99279000000656,4.01847700000554,3.63206299999356,5
+808490,B,younger,22/04/2004,22,22.4166666666667,male,tertiary,n,NaN,n,none,0,2,"English, German",y,Guitar,16,27,27,27,27,4,0,same,s,1,3.99271000000089,4.01862900000066,3.63209099999815,5
+808490,B,younger,22/04/2004,22,22.4166666666667,male,tertiary,n,NaN,n,none,0,2,"English, German",y,Guitar,16,21,19,21,19,5,2,diff,d,1,3.99269099999964,4.01850400000066,3.63206400000304,5
+808490,B,younger,22/04/2004,22,22.4166666666667,male,tertiary,n,NaN,n,none,0,2,"English, German",y,Guitar,16,15,15,15,15,6,0,same,s,1,3.99265399999917,4.01843800000101,3.6320869999975,5
+808490,B,younger,22/04/2004,22,22.4166666666667,male,tertiary,n,NaN,n,none,0,2,"English, German",y,Guitar,16,21,21,21,21,7,0,same,s,1,3.99269900000095,4.01837399999797,3.63217300000042,5
+808490,B,younger,22/04/2004,22,22.4166666666667,male,tertiary,n,NaN,n,none,0,2,"English, German",y,Guitar,16,27,25,27,25,8,2,diff,d,1,3.99263199999928,4.01846299999952,3.63207400000095,5
+808490,B,younger,22/04/2004,22,22.4166666666667,male,tertiary,n,NaN,n,none,0,2,"English, German",y,Guitar,16,33,33,33,33,9,0,same,s,1,3.99267000000179,4.0184450000003,3.63210799999535,5
+808490,B,younger,22/04/2004,22,22.4166666666667,male,tertiary,n,NaN,n,none,0,2,"English, German",y,Guitar,16,15,15,15,15,10,0,same,s,1,3.99271000000089,4.01844000000507,3.63210499999672,5
+808490,B,younger,22/04/2004,22,22.4166666666667,male,tertiary,n,NaN,n,none,0,2,"English, German",y,Guitar,16,3,3,3,3,11,0,same,s,1,3.99272500000149,4.01841299999505,3.65790900000185,5
+808490,B,younger,22/04/2004,22,22.4166666666667,male,tertiary,n,NaN,n,none,0,2,"English, German",y,Guitar,16,21,21,21,21,12,0,same,s,1,3.99271899999678,4.01846499999613,3.63207800000161,5
+808490,B,younger,22/04/2004,22,22.4166666666667,male,tertiary,n,NaN,n,none,0,2,"English, German",y,Guitar,16,27,27,27,27,13,0,same,s,1,3.99268299999833,4.01847100000083,3.63210099999607,5
+808490,B,younger,22/04/2004,22,22.4166666666667,male,tertiary,n,NaN,n,none,0,2,"English, German",y,Guitar,16,33,33,33,33,14,0,same,s,1,3.99275,4.01852899999917,3.63205200000107,5
+808490,B,younger,22/04/2004,22,22.4166666666667,male,tertiary,n,NaN,n,none,0,2,"English, German",y,Guitar,16,3,1,1,3,15,2,diff,d,1,3.99278400000185,4.01851900000125,3.63199899999797,5
+808490,B,younger,22/04/2004,22,22.4166666666667,male,tertiary,n,NaN,n,none,0,2,"English, German",y,Guitar,16,27,25,25,27,16,2,diff,s,0,3.99266799999773,4.01844400000572,3.63212999999523,5
+808490,B,younger,22/04/2004,22,22.4166666666667,male,tertiary,n,NaN,n,none,0,2,"English, German",y,Guitar,16,9,7,9,7,17,2,diff,d,1,3.99270499999821,4.01858100000024,3.63210899999738,5
+808490,B,younger,22/04/2004,22,22.4166666666667,male,tertiary,n,NaN,n,none,0,2,"English, German",y,Guitar,16,15,13,15,13,18,2,diff,d,1,3.99270000000298,4.01848600000143,3.63207999999821,5
+808490,B,younger,22/04/2004,22,22.4166666666667,male,tertiary,n,NaN,n,none,0,2,"English, German",y,Guitar,16,33,31,33,31,19,2,diff,d,1,3.99266200000048,4.01850899999589,3.65779399999976,5
+808490,B,younger,22/04/2004,22,22.4166666666667,male,tertiary,n,NaN,n,none,0,2,"English, German",y,Guitar,16,15,13,13,15,20,2,diff,d,1,3.99270600000024,4.01847699999809,3.63208100000024,5
+808490,B,younger,22/04/2004,22,22.4166666666667,male,tertiary,n,NaN,n,none,0,2,"English, German",y,Guitar,16,9,9,9,9,21,0,same,s,1,3.99271000000089,4.01841099999845,3.6321230000034,5
+808490,B,younger,22/04/2004,22,22.4166666666667,male,tertiary,n,NaN,n,none,0,2,"English, German",y,Guitar,16,9,7,7,9,22,2,diff,d,1,3.99267100000381,4.01856700000167,3.63207599999756,5
+808490,B,younger,22/04/2004,22,22.4166666666667,male,tertiary,n,NaN,n,none,0,2,"English, German",y,Guitar,16,33,31,31,33,23,2,diff,d,1,3.99273399999738,4.01852400000393,3.63202199999988,5
+808490,B,younger,22/04/2004,22,22.4166666666667,male,tertiary,n,NaN,n,none,0,2,"English, German",y,Guitar,16,3,1,3,1,24,2,diff,d,1,3.9926969999969,4.01847900000215,3.63207800000161,5

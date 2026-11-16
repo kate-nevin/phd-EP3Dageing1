@@ -1,0 +1,58 @@
+# Kate Nevin
+# 16 November 2026
+
+Here I am writing down the steps that I used to create my git repository in case I forget and need to do it again for another study.
+
+1. Sign into GitHub, and click the +  in the top right hand corner to create a new repository. Click "Create a new repository" from the drop down menu.
+
+2. Type in your new repository name. Here, I have chosen "kate-nevin/phd-EP3Dageing1". I have chosen to add the "1" at the end in case I have to do multiple versions (hopefully not, but its best to prepare for the worse case scenario). Write in your description.
+
+3. Do not create a .gitignore when creating the repository. You will create that later.
+
+4. Do not set a licence.
+
+5. Click "Create repository"
+
+6. Copy the HTTPS code.
+
+7. Go to the folder that you want to make the repository. Copy the path of this folder e.g. "D:\1_EP3Dageing"
+
+8. Open up GitBash on your computer from the terminal. Type in cd "your path"
+
+	e.g. cd "D:\1_EP3Dageing"
+
+9. Create a .gitignore by typing the following:
+
+	nano .gitignore
+
+In this file, exclude any file types and folders that you don't want to sync:
+	*.mp4
+	*.avi
+	*.mov
+	*.npy
+	0. Calibration/calibration/debug/
+	0. Calibration/calibration_raw_videos/
+	2. Raw Data and Videos/2. Raw_videos/
+	3. Video Pre-Processing/0. videos_to_be_split/
+	3. Video Pre-Processing/1. split_videos_to_be_processed
+	5. Triangulation/
+	
+Save with Ctrl+O, ENTER< Ctrl+X
+
+10. Initialise the repo with the branch name set (copy and paste exactly):
+
+	git init -b main
+
+11. Do a dry run and check what files are planned to upload. Check the output thoroughly:
+
+	git add -n
+
+You may get the following error (due to syncing from a hard drive),
+
+	ERROR: fatal: detected dubious ownership in repository at 'D:/1_EP3Dageing'
+	'D:/1_EP3Dageing' is on a file system that does not record ownership
+	To add an exception for this directory, call:
+
+If so, type the following:
+	git config --global --add safe.directory D:/1_EP3Dageing
+	git add -n .

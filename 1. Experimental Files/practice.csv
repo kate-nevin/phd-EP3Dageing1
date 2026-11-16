@@ -1,0 +1,5 @@
+﻿group,ref_stim,comp_stim,first_stim,second_stim,trial_type
+practice,p1,p1,p1,p1,same
+practice,p1,p2,p1,p2,diff
+practice,p2,p1,p2,p1,diff
+practice,p2,p2,p2,p2,same

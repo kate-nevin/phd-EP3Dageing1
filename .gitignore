@@ -1,0 +1,18 @@
+
+*.mp4
+*.avi
+*.mov
+*.npy
+*.asv
+*.py
+*.log
+*.psydat
+*.xlsx
+0. Calibration/calibration/debug/
+0. Calibration/calibration_raw_videos/
+2. Raw Data and Videos/2. Raw_videos/
+4. Video Pre-Processing/0. videos_to_be_split/
+4. Video Pre-Processing/1. split_videos_to_be_processed/
+5. Triangulation/
+.Rhistory
+.Rproj.user/

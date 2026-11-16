@@ -1,0 +1,73 @@
+Kate Nevin
+03 11 2026 - Running again for the main study (first 11 participants so far)
+04 11 2026 - Triangulation was finished, started converting to csv coordinates (Added step 11 and step 12 notes).
+
+
+1. Record calibration videos. These need to be intrinsic (individual) and extrinsic (paired) videos. 
+- intrinsic videos are recorded with the individual_calibration_script_FINAL matlab script
+- extrinsic videos are recorded with the paired_calibration_script_FINAL matlab script
+- the checkerboard is required to record these calibration videos. The checkerboard is A4 25 mm 10 x 7. This checkerboard can be downloaded from the following link: https://markhedleyjones.com/media/projects/calibration-checkerboard-collection/Checkerboard-A4-25mm-10x7.pdf. Copies are also available on the sharepoint.
+
+2. Record intrinsic calibration videos. In these videos, recordings are done one at a time for each camera. The checkerboard shoudl be visible to the camera at all times. Record one video per camera and label (camera_1.mp4, camera_2.mp4, camera_3.mp4) and put in folder called 'Intrinsic'.
+
+3. Record extrinsic calibration videos. These videos are paired. This means that videos are taken by recording from TWO cameras at the same time. Make sure that the checkerboard is visible at all times from the two cameras. Create folders (done within MATLAB) called (camera_1-camera_2, camera_2-camera_3, camera_3-camera_1). Within each folder, store the calibration video pairs (named camera_1.mp4, camera_2.mp4 etc).
+
+4. Download AnnotationTool. To download this application, go to the JARVIS Mocap - Documentation webpage (https://jarvis-mocap.github.io/jarvis-docs/downloads/downloads/) and download the application applicable for your device (e.g. Windows 64 bit). The application will download and you can activate it.  
+
+5. Run calibration. Open up AnnotationTool on your computer. A GUI should open up. Type 'calibration' in the textbox for 'Calibration Set Name'. Click 'Create new Calibration'. Select the main directory where everything is set. Next, specify the Intrinsic and Extrinsic folders. Select 'Update camera names'. Add the camera pairs. Specify the checkerboard dimensions (our checkerboard is A4 25 mm 10 x 7). Click 'Calibrate'.
+
+6. Go into calibration folder and rename the .yaml files as so:
+- camera_1.mp4 --> cam0.mp4
+- camera_2.mp4 --> cam1.mp4
+- camera_3.mp4 --> cam2.mp4
+
+7. Record experimental videos. Create a folder called 'videos_long'. The experimental file FINAL_PILOT_VERSION_AGEING_EP.m will record the behavioural and video data. Within this code, 24 folders will be created for the participant. Each folder is created for each participant and trial (24). The name for each folder is the participant's ID number and trial number (e.g. 973368_trial_01). In each folder, the three videos recorded for each trial are stored automatically. Each video is labelled 'cam0.mp4', 'cam1.mp4', and 'cam2.mp4'.
+
+8. Splitting videos. Each video is 12 seconds long, however, we are only interested in the first 4 seconds (first object exploration) and the last four seconds (second object exploration). Create a folder called 'videos'. Run the script split_trial_into_two_vids.m. Make sure that the source directory (videos_long) and destination directory (videos) are correct. This script will split the videos into frames, and save as two separate videos. Videos are now saved as participantID_trial_number_firstorsecond. If it is first, it is the first object explored in the trial. If it is second, it is the second object explored in the trial.
+
+9. Triangulating the data. We are going to run Athena. To install Athena go to the following documentation page: https://neural-control-and-computation-lab.github.io/athena/. Make sure that the videos you want to process are in a folder called 'videos'. Make sure that the calibration .yaml files are in a folder called 'calibration'. Make sure that these two folders are in the same folder. Run anaconda prompt as ADMINISTRATOR.
+
+Run:
+conda activate athena
+
+athena
+
+A GUI will open up. Select the main folder where all the data is kept (calibration folder and video folder must be within this). Select all the trials that you want to run. Only click save 2d vids. 
+
+10. Check data FOR ONE FILE ONLY. When the triangulation is finished, open up anaconda prompt. Copy the path of the file that you want to read:
+
+python
+import numpy as numpy
+import pandas as pd
+
+# This is where the landmark file already exists
+npy_path = r"paste_path_here.npy"
+
+# This is where you want the new file to go
+csv_path = r"paste_path_here.csv"
+
+data_3d = np.load(npy_path)
+
+print(data_3d.shape)  # should be (240, 75, 3)
+
+reshaped = data_3d.reshape(240, 75 * 3)
+
+columns = [f"M{lm}_{coord}" for lm in range(75) for coord in ["x", "y", "z"]]
+
+df = pd.DataFrame(reshaped, columns=columns)
+df.index.name = "frame"
+
+df.to_csv(csv_path)
+print("Done! Shape:", df.shape)
+
+11. To do this for all files, I have written a script that is found in the 6. Clean data scripts folder. It is called "npy_to_csv_hand_columns.m". Open up this file and set the correct source directory for the landmarks and the correct output directory for the raw 3D landmark csv data. You will need to create new folders for the raw 3D landmark csv data ('7. Cleaned data\Raw 3D landmark csv data". 
+
+E.g. sourceDir = "D:\1_EP3Dageing\7. Cleaned data\5. Triangulation\landmarks"
+     outputDir = "D:\1_EP3Dageing\7. Cleaned data\Raw 3D landmark csv data"
+
+IMPORTANT: Make sure that the readNPYheader and readNPY matlab scripts are in the same folder as the "npy_to_csv_hand_columns.m" folder (6. Clean data scripts), else you will get the following error: 
+
+"Undefined function 'readNPY' for input arguments of type 'char'."
+
+
+12. Check the quality of the triangulation using the "triangulation_diagnostics.m" script. To do, change the DATA_ROOT path to where the raw 3D landmark csv data has been stored in the previous step (e.g. "D:\1_EP3Dageing\7. Cleaned data\Raw 3D landmark csv data"). Create a new folder to store the output of the triangulation quality checks (e.g. 8. Triangulation data check outputs), and set this path to the OUTPUT_DIR.
