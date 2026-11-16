@@ -3,6 +3,9 @@
 
 Here I am writing down the steps that I used to create my git repository in case I forget and need to do it again for another study.
 
+
+---------------------------------------- CREATING A GIT REPOSITORY -----------------------------------------------
+
 1. Sign into GitHub, and click the +  in the top right hand corner to create a new repository. Click "Create a new repository" from the drop down menu.
 
 2. Type in your new repository name. Here, I have chosen "kate-nevin/phd-EP3Dageing1". I have chosen to add the "1" at the end in case I have to do multiple versions (hopefully not, but its best to prepare for the worse case scenario). Write in your description.
@@ -56,3 +59,41 @@ You may get the following error (due to syncing from a hard drive),
 If so, type the following:
 	git config --global --add safe.directory D:/1_EP3Dageing
 	git add -n .
+
+12. If you are happy to push type:
+
+	git add .
+
+13. Then:
+	git commit -m "Initial commit"
+
+14. Then:
+	git remote add origin PASTE_YOUR_URL_HERE
+	
+
+     e.g. git remote add origin https://github.com/kate-nevin/phd-EP3Dageing1.git
+
+15. Then:
+	git push -u origin main
+
+
+------------------------- PULL FROM A GIT REPOSITORY ----------------------------
+
+1. Go to the project folder
+	cd /d/1_EP3Dageing
+
+2. Pull any changes made on another computer
+	git pull
+
+
+------------------------- PUSH TO A GIT REPOSITORY --------------------------------
+
+Push at the end of every work session.
+
+1. Check what has changed
+	git status
+
+2. Save a snapshot and upload it:
+	git add .
+	git commit -m "short description of what you changed"
+	git push
