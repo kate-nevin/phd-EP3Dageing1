@@ -93,6 +93,10 @@ behavioural_list <- lapply(behavioural_files, function(file) {
     df <- df %>% mutate(group = as.character(group))
   }
   
+  if ("participant" %in% names(df)) {
+    df <- df %>% mutate(participant = as.character(participant))
+  }
+  
   df
 })
 
@@ -197,10 +201,14 @@ signal_det <- beh_df %>%
             misses = sum(trial_type == "same" & key_resp == "d"),
             fa = sum(trial_type == "diff" & key_resp == "s"),
             corr_rej = sum(trial_type == "diff" & key_resp == "d")) %>%
-  mutate(dprime = dprime(n_hit = hits, n_fa = fa, 
-                         n_miss = misses, n_cr = corr_rej)$dprime,
+  mutate(dprime = dprime(n_hit = hits, 
+                         n_miss = misses, 
+                         n_fa = fa, 
+                         n_cr = corr_rej)$dprime,
          c = dprime(n_hit = hits, 
-                    n_fa = fa, n_miss = misses, n_cr = corr_rej)$c)
+                    n_fa = fa, 
+                    n_miss = misses, 
+                    n_cr = corr_rej)$c)
 
 ```
 
@@ -233,4 +241,117 @@ ggplot(signal_det,
   labs(x = "Participant", y = "Bias (c)") +
   theme_minimal() +
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
+```
+
+### Compare same trials for improvement in the second exposure
+
+Here I am going to see if participants get better in the second exposure to pairs of same objects
+
+```{r same-trials-order-effects-cleaning}
+
+same_trials <- beh_df %>%
+  filter(trial_type == "same")
+
+# label first versus second presentation
+
+same_trials_order_effects <- same_trials %>%
+  group_by(participant, ref_stim, comp_stim) %>%
+  arrange(trial_num, .by_group = TRUE) %>%
+  mutate(repetition = factor(row_number(), labels = c("first", "second"))) %>%
+  ungroup()
+
+same_trials_order_effects %>% count(participant, ref_stim, comp_stim) %>% count(n)
+  
+  
+
+same_trials_order_effects
+```
+
+```{r same-trials-order-effects-mean-accuracy}
+same_trials_order_effects %>%
+  group_by(repetition) %>%
+  summarise(mean_acc = mean(corr), sd = sd(corr), .groups = "drop")
+```
+
+```{r same-trials-order-effects-logistic-mixed-model}
+library(lme4)
+
+m <- glmer(corr ~ repetition + (1 | participant) + (1 | ref_stim),
+           data = same_trials_order_effects, family = binomial)
+summary(m)
+```
+
+```{r same-trials-order-effects-paired-comparisons}
+
+library(tidyr)
+
+per_pp <- same_trials_order_effects %>%
+  group_by(participant, repetition) %>%
+  summarise(acc = mean(corr), .groups = "drop") %>%
+  pivot_wider(names_from = repetition, values_from = acc)
+
+wilcox.test(per_pp$second, per_pp$first, paired = TRUE)  # or t.test(..., paired = TRUE)
+```
+
+Accuracy actually dipped slightly on the second exposure, however this does not come close to significance.
+
+```{r same-trials-paired-plot}
+
+per_pp_long <- same_trials_order_effects %>%
+  group_by(participant, repetition) %>%
+  summarise(acc = mean(corr), .groups = "drop")
+
+summ <- per_pp_long %>%
+  group_by(repetition) %>%
+  summarise(mean = mean(acc),
+            se = sd(acc) / sqrt(n()),
+            lo = mean - qt(.975, n() - 1) * se,
+            hi = mean + qt(.975, n() - 1) * se)
+
+ggplot(per_pp_long, aes(x = repetition, y = acc)) + 
+  geom_line(aes(group = participant),
+            colour = "grey60", alpha = 0.5,
+            position = position_jitter(width = 0, 
+                                       height = 0.015,
+                                       seed = 1)) +
+  geom_point(colour = "grey60", alpha = 0.6,
+             position = position_jitter(width = 0,
+                                        height = 0.015,
+                                        seed = 1)) +
+  geom_pointrange(data = summ,
+                  aes(y = mean,
+                      ymin = lo,
+                      ymax = hi),
+                  color = "black",
+                  size = 0.8,
+                  linewidth = 1) +
+  geom_line(data = summ,
+            aes(y = mean,
+                group = 1),
+            linewidth = 1) +
+  scale_y_continuous(limits = c(0, 1.05),
+                     labels = scales::percent) +
+  scale_x_discrete(labels = c("First", "Second")) +
+  labs(x = "Presentation",
+       y = "Accuracy (same trials)",
+       caption = "Grey lines = individual participants; black = mean ± 95% CI") +
+  theme_classic(base_size = 13)
+```
+
+## How does performance change over time?
+
+Here I am going to plot performance by trail number per participant.
+
+```{r accuracy-by-trial-num}
+
+ggplot(data = beh_df, aes(x = trial_num, y = corr, group = participant, colour = trial_type)) +
+  geom_point() +
+  facet_wrap(~participant) +
+  labs(title = "Performance by Trial Number (Per Participant)",
+       x = "Trial Number",
+       y = "Correct (1) or Incorrect (0) response",
+       colour = "Trial Type") +
+  ylim(-0.1, 1.1) +
+  theme_bw()
+
 ```
